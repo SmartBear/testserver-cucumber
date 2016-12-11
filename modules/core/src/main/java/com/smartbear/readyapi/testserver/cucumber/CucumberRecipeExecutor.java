@@ -51,6 +51,7 @@ public class CucumberRecipeExecutor {
 
                 testServerClient.setCredentials(user, password);
                 executor = testServerClient.createRecipeExecutor();
+                LOG.info("Using TestServer at [" + url.toString() + "] for recipe execution");
             } catch (MalformedURLException e) {
                 LOG.error("Failed to create TestServerClient - using local executor instead", e);
             }
@@ -58,6 +59,7 @@ public class CucumberRecipeExecutor {
 
         if (executor == null) {
             executor = new SoapUIRecipeExecutor();
+            LOG.info("Using Local Recipe Executor");
         }
     }
 

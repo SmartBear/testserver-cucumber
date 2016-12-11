@@ -3,7 +3,6 @@ package com.smartbear.readyapi.testserver.cucumber;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Custom Cucumber Runner that adds the built in StepDefs to the invocation of
