@@ -4,6 +4,7 @@ import com.smartbear.readyapi.client.ExecutionListener;
 import com.smartbear.readyapi.client.TestRecipe;
 import com.smartbear.readyapi.client.execution.Execution;
 import com.smartbear.readyapi.client.execution.RecipeExecutor;
+import com.smartbear.readyapi.client.execution.SoapUIRecipeExecutor;
 import com.smartbear.readyapi.client.execution.TestServerClient;
 import com.smartbear.readyapi.client.model.TestCase;
 import cucumber.api.Scenario;
@@ -30,28 +31,34 @@ public class CucumberRecipeExecutor {
     private static final String TESTSERVER_ENDPOINT = "testserver.endpoint";
     private static final String TESTSERVER_USER = "testserver.user";
     private static final String TESTSERVER_PASSWORD = "testserver.password";
-    private static final String DEFAULT_TESTSERVER_ENDPOINT = "http://testserver.readyapi.io:8080";
-    private static final String DEFAULT_TESTSERVER_USER = "demoUser";
-    private static final String DEFAULT_TESTSERVER_PASSWORD = "demoPassword";
 
     private RecipeExecutor executor;
     private boolean async = false;
 
-    public CucumberRecipeExecutor() throws MalformedURLException {
+    public CucumberRecipeExecutor() {
         Map<String, String> env = System.getenv();
-        URL url = new URL(env.getOrDefault(TESTSERVER_ENDPOINT,
-            System.getProperty(TESTSERVER_ENDPOINT, DEFAULT_TESTSERVER_ENDPOINT)));
+        String endpoint = env.getOrDefault(TESTSERVER_ENDPOINT, System.getProperty(TESTSERVER_ENDPOINT));
+        if (endpoint != null) {
+            try {
+                URL url = new URL(endpoint);
+                TestServerClient testServerClient = TestServerClient.fromUrl(url.toString());
 
-        TestServerClient testServerClient = TestServerClient.fromUrl( url.toString() );
+                String user = env.getOrDefault(TESTSERVER_USER,
+                        System.getProperty(TESTSERVER_USER));
 
-        String user = env.getOrDefault(TESTSERVER_USER,
-            System.getProperty(TESTSERVER_USER, DEFAULT_TESTSERVER_USER));
+                String password = env.getOrDefault(TESTSERVER_PASSWORD,
+                        System.getProperty(TESTSERVER_PASSWORD));
 
-        String password = env.getOrDefault(TESTSERVER_PASSWORD,
-            System.getProperty(TESTSERVER_PASSWORD, DEFAULT_TESTSERVER_PASSWORD));
+                testServerClient.setCredentials(user, password);
+                executor = testServerClient.createRecipeExecutor();
+            } catch (MalformedURLException e) {
+                LOG.error("Failed to create TestServerClient - using local executor instead", e);
+            }
+        }
 
-        testServerClient.setCredentials(user, password);
-        executor = testServerClient.createRecipeExecutor();
+        if (executor == null) {
+            executor = new SoapUIRecipeExecutor();
+        }
     }
 
     /**

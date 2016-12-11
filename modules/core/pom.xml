@@ -45,7 +45,13 @@
 
         <dependency>
             <groupId>com.smartbear.readyapi</groupId>
-            <artifactId>ready-api-testserver-client</artifactId>
+            <artifactId>ready-api-testserver-client-core</artifactId>
+            <version>1.2.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.smartbear.readyapi</groupId>
+            <artifactId>ready-api-testserver-local-soapui-client</artifactId>
             <version>1.2.2-SNAPSHOT</version>
         </dependency>
 
