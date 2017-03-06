@@ -1,11 +1,11 @@
 package com.smartbear.readyapi.testserver.cucumber;
 
-import com.smartbear.readyapi.client.ExecutionListener;
-import com.smartbear.readyapi.client.TestRecipe;
-import com.smartbear.readyapi.client.execution.Execution;
-import com.smartbear.readyapi.client.execution.RecipeExecutor;
-import com.smartbear.readyapi.client.execution.TestServerClient;
 import com.smartbear.readyapi.client.model.TestCase;
+import com.smartbear.readyapi4j.ExecutionListener;
+import com.smartbear.readyapi4j.TestRecipe;
+import com.smartbear.readyapi4j.execution.Execution;
+import com.smartbear.readyapi4j.execution.RecipeExecutor;
+import com.smartbear.readyapi4j.testserver.execution.TestServerClient;
 import cucumber.api.Scenario;
 import io.swagger.util.Json;
 import org.apache.commons.lang3.StringUtils;
@@ -40,15 +40,15 @@ public class CucumberRecipeExecutor {
     public CucumberRecipeExecutor() throws MalformedURLException {
         Map<String, String> env = System.getenv();
         URL url = new URL(env.getOrDefault(TESTSERVER_ENDPOINT,
-            System.getProperty(TESTSERVER_ENDPOINT, DEFAULT_TESTSERVER_ENDPOINT)));
+                System.getProperty(TESTSERVER_ENDPOINT, DEFAULT_TESTSERVER_ENDPOINT)));
 
-        TestServerClient testServerClient = TestServerClient.fromUrl( url.toString() );
+        TestServerClient testServerClient = TestServerClient.fromUrl(url.toString());
 
         String user = env.getOrDefault(TESTSERVER_USER,
-            System.getProperty(TESTSERVER_USER, DEFAULT_TESTSERVER_USER));
+                System.getProperty(TESTSERVER_USER, DEFAULT_TESTSERVER_USER));
 
         String password = env.getOrDefault(TESTSERVER_PASSWORD,
-            System.getProperty(TESTSERVER_PASSWORD, DEFAULT_TESTSERVER_PASSWORD));
+                System.getProperty(TESTSERVER_PASSWORD, DEFAULT_TESTSERVER_PASSWORD));
 
         testServerClient.setCredentials(user, password);
         executor = testServerClient.createRecipeExecutor();
@@ -58,7 +58,7 @@ public class CucumberRecipeExecutor {
      * Executes the specified TestCase and returns the Execution. If a scenario
      * is specified and the testserver.cucumber.logfolder system property is set,
      * the generated recipe will be written to the specified folder.
-     *
+     * <p>
      * It is possible to temporarily "bypass" recipe execution by specifying
      * a testserver.cucumber.silent property - in which case testcases will not be
      * submitted to the server, but still logged to the above folder.
@@ -66,7 +66,7 @@ public class CucumberRecipeExecutor {
      * @param testCase the TestCase to execute
      * @param scenario the Cucumber scenario used to generate the specified Recipe
      * @return the TestServer Execution for the executed TestCase
-     * @throws com.smartbear.readyapi.client.execution.ApiException if recipe execution failes
+     * @throws com.smartbear.readyapi4j.testserver.execution.ApiException if recipe execution failes
      */
 
     public Execution runTestCase(TestCase testCase, Scenario scenario) {
@@ -77,12 +77,12 @@ public class CucumberRecipeExecutor {
             LOG.debug(testRecipe.toString());
         }
 
-        String logFolder = System.getProperty( "testserver.cucumber.logfolder", null );
-        if( scenario != null && logFolder != null ){
+        String logFolder = System.getProperty("testserver.cucumber.logfolder", null);
+        if (scenario != null && logFolder != null) {
             logScenarioToFile(testRecipe, scenario, logFolder);
         }
 
-        return async ? executor.submitRecipe( testRecipe ) : executor.executeRecipe(testRecipe);
+        return async ? executor.submitRecipe(testRecipe) : executor.executeRecipe(testRecipe);
     }
 
     /**
@@ -90,14 +90,14 @@ public class CucumberRecipeExecutor {
      * specified scenario
      *
      * @param testRecipe the test recipe to log
-     * @param scenario the associated Cucumber scenario
-     * @param logFolder the root folder for generated folders and files
+     * @param scenario   the associated Cucumber scenario
+     * @param logFolder  the root folder for generated folders and files
      */
 
     protected void logScenarioToFile(TestRecipe testRecipe, Scenario scenario, String logFolder) {
         try {
-            File folder = new File( logFolder );
-            if( !folder.exists() || !folder.isDirectory()){
+            File folder = new File(logFolder);
+            if (!folder.exists() || !folder.isDirectory()) {
                 folder.mkdirs();
             }
 
@@ -105,7 +105,7 @@ public class CucumberRecipeExecutor {
             File scenarioFolder = folder;
             int fileIndex = 0;
 
-            if( pathSegments.length > 1 ) {
+            if (pathSegments.length > 1) {
                 scenarioFolder = new File(folder, pathSegments[0]);
                 if (scenarioFolder.exists() || !scenarioFolder.isDirectory()) {
                     scenarioFolder.mkdirs();
@@ -115,25 +115,25 @@ public class CucumberRecipeExecutor {
             }
 
             String filename = pathSegments[fileIndex];
-            for( int c = fileIndex+1; c < pathSegments.length; c++ ){
+            for (int c = fileIndex + 1; c < pathSegments.length; c++) {
                 String segment = pathSegments[c].trim();
-                if( !StringUtils.isBlank( segment )){
+                if (!StringUtils.isBlank(segment)) {
                     filename += "_" + segment;
                 }
             }
 
             filename += ".json";
 
-            File scenarioFile = new File( scenarioFolder, filename );
-            FileWriter writer = new FileWriter( scenarioFile );
+            File scenarioFile = new File(scenarioFolder, filename);
+            FileWriter writer = new FileWriter(scenarioFile);
 
             LOG.info("Writing recipe to " + folder.getName() + File.separatorChar + scenarioFolder.getName() +
-                File.separatorChar + scenarioFile.getName());
+                    File.separatorChar + scenarioFile.getName());
 
-            writer.write( Json.pretty(testRecipe) );
+            writer.write(Json.pretty(testRecipe));
             writer.close();
         } catch (Exception e) {
-            LOG.error("Failed to write recipe to logFolder [" + logFolder + "]", e );
+            LOG.error("Failed to write recipe to logFolder [" + logFolder + "]", e);
         }
     }
 
