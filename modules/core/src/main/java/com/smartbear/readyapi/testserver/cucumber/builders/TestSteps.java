@@ -2,7 +2,7 @@ package com.smartbear.readyapi.testserver.cucumber.builders;
 
 import com.smartbear.readyapi.client.model.RestTestRequestStep;
 import com.smartbear.readyapi.client.model.SoapRequestTestStep;
-import com.smartbear.readyapi.client.teststeps.TestStepTypes;
+import com.smartbear.readyapi4j.teststeps.TestStepTypes;
 
 /**
  * Utility class with static method for building various types of TestSteps
@@ -10,7 +10,7 @@ import com.smartbear.readyapi.client.teststeps.TestStepTypes;
 
 public class TestSteps {
 
-    public static RestTestRequestStep restRequest( String method, String endpoint ){
+    public static RestTestRequestStep restRequest(String method, String endpoint) {
         RestTestRequestStep testStep = new RestTestRequestStep();
         testStep.setURI(endpoint);
         testStep.setMethod(method);
@@ -18,12 +18,12 @@ public class TestSteps {
         return testStep;
     }
 
-    public static SoapRequestTestStep soapRequest( String wsdl, String operation, String binding ){
+    public static SoapRequestTestStep soapRequest(String wsdl, String operation, String binding) {
         SoapRequestTestStep testStep = new SoapRequestTestStep();
-        testStep.setWsdl( wsdl );
-        testStep.setBinding( binding );
-        testStep.setOperation( operation );
-        testStep.setType( TestStepTypes.SOAP_REQUEST.getName());
+        testStep.setWsdl(wsdl);
+        testStep.setBinding(binding);
+        testStep.setOperation(operation);
+        testStep.setType(TestStepTypes.SOAP_REQUEST.getName());
         return testStep;
     }
 }

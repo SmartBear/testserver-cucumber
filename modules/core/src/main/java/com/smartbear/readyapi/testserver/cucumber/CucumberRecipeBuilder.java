@@ -1,10 +1,10 @@
 package com.smartbear.readyapi.testserver.cucumber;
 
 import com.google.common.collect.Lists;
-import com.smartbear.readyapi.client.execution.Execution;
 import com.smartbear.readyapi.client.model.ProjectResultReport;
 import com.smartbear.readyapi.client.model.TestCase;
 import com.smartbear.readyapi.client.model.TestStep;
+import com.smartbear.readyapi4j.execution.Execution;
 import cucumber.api.Scenario;
 import cucumber.api.java.After;
 import cucumber.runtime.java.guice.ScenarioScoped;
@@ -49,9 +49,9 @@ public class CucumberRecipeBuilder {
         testCase.setTestSteps(testSteps);
         Execution execution = executor.runTestCase(testCase, scenario);
 
-        if( assertResult && !executor.isAsync() ) {
+        if (assertResult && !executor.isAsync()) {
             assertEquals(Arrays.toString(execution.getErrorMessages().toArray()),
-                ProjectResultReport.StatusEnum.FINISHED, execution.getCurrentStatus());
+                    ProjectResultReport.StatusEnum.FINISHED, execution.getCurrentStatus());
         }
     }
 

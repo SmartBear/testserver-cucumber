@@ -28,9 +28,9 @@ Feature: SwaggerHub REST API
     And the response type is json
     And the response body contains
     """
-    "description":"<description>"
+    "title":"<title>"
     """
     Examples:
-    | owner       | api          | version  | description                       |
-    | swagger-hub | registry-api | 1.0.10   | The registry API for SwaggerHub   |
-    | fehguy      | sonos-api    | 1.0.0    | A REST API for the Sonos platform |
+    | owner       | api                   | version  | title                     |
+    | swagger-hub | registry-api          | 1.0.10   | SwaggerHub Registry API   |
+    | smartbear   | ready-api-testserver  | 1.2.1    | Ready! API TestServer API |
